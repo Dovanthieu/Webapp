@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #eaf6ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background: white;
+        padding: 30px 25px;
+        border-radius: 20px;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+        width: 360px;
+        text-align: center;
+      }
+      img {
+        width: 140px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        margin: 10px 0 25px;
+        font-size: 30px;
+        line-height: 1.4;
+        color: #2d78cf ;
+      }
+      input[type="email"],
+      input[type="password"],
+      input[type="text"] {
+        width: 90%;
+        padding: 12px;
+        margin: 10px 0 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+      button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #2d78cf;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        margin-top: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+.links {
+  margin-top: 20px;
+}
+      .links a {
+        color: #2d78cf;
+        text-decoration: none;
+      } 
+      .footer {
+        margin-top: 25px;
+        font-size: 13px;
+        color: red;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+      }
+
+      .modal-content {
+  background-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: fit-content;
+}
+    
+
+      .tab-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .tab-buttons button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #2d78cf;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      .tab {
+        display: none;
+      }
+      .tab.active {
+        display: block;
+      }
+
+      .launch-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background-color: #2d78cf;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Modal -->
+    <div id="authModal" class="modal">
+      <div class="modal-content">
+
+       <!-- Modal thông báo lỗi đăng ký -->
+<div id="errorModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: red;">Email đã được đăng ký!</h2>
+      <p>Vui lòng đăng nhập hoặc sử dụng email khác.</p>
+      <button onclick="closeErrorModal()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+        <!-- Đăng Nhập -->
+        <div id="login" class="tab active">
+          <div class="container">
+             <div class="tab-buttons">
+          <button onclick="showTab('login')">Đăng Nhập</button>
+          <button onclick="showTab('register')">Đăng Ký</button>
+        </div>
+            <img src="https://imgur.com/XNg24jc.png">
+            <h2>HỆ THỐNG ERP</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+              <input type="email" name="email" placeholder="Email đăng nhập" required>
+              <input type="password" name="password" placeholder="Mật khẩu" required>
+              <button type="submit">Đăng Nhập</button>
+            </form>
+<!-- Quên mật khẩu -->
+    <div class="links" style="margin-top: 10px;">
+      <a href="javascript:void(0);" onclick="showTab('forgotPassword')">Quên mật khẩu?</a>
+    </div>
+            <div id="responseMessage" style="margin-top: 10px; color: green;"></div>
+
+
+            <div class="footer">Phát triển bởi Đỗ Văn Thiệu</div>
+          </div>
+        </div>
+              
+        <!-- Đăng Ký -->
+        <div id="register" class="tab">
+          <div class="container">
+            <img src="https://imgur.com/XNg24jc.png">
+            <h2>ĐĂNG KÝ</h2>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+              <input type="text" name="name" placeholder="Họ và tên" required>
+              <input type="email" name="email" placeholder="Email" required>
+              <input type="password" name="password" placeholder="Mật khẩu" required>
+              <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+              <button type="submit">Tạo Tài Khoản</button>
+            </form>
+            
+            <div class="footer">Phát triển bởi Đỗ Văn Thiệu</div>
+          </div>
+        </div>
+        <!-- Quên mật khẩu -->
+<div id="forgotPassword" class="tab">
+  <div class="container">
+    <h2>Quên mật khẩu?</h2>
+    <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+      <input type="email" name="email" placeholder="Nhập email của bạn" required>
+      <button type="submit">Gửi yêu cầu đặt lại mật khẩu</button>
+    </form>
+    
+    <div id="forgotPasswordMessage" style="margin-top: 10px; color: green;"></div>
+    <div class="footer">Phát triển bởi Đỗ Văn Thiệu</div>
+  </div>
+</div>
+      </div>
+    </div>
+
+
+  <script>
+  function openModal() {
+    document.getElementById("authModal").style.display = "block";
+    showTab('login');
+  }
+
+  function closeModal() {
+    document.getElementById("authModal").style.display = "none";
+  }
+
+  function showTab(tabName) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+  }
+
+    window.onload = function() {
+    document.getElementById("authModal").style.display = "flex";
+  };
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      event.preventDefault(); // 🚫 Không cho tắt bằng Esc
+    }
+  });
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const form = document.getElementById("loginForm");
+    const data = {
+      email: form.email.value,
+      password: form.password.value
+    };
+    google.script.run
+      .withSuccessHandler(function(response) {
+       if (response.startsWith("Đăng nhập thành công")) {
+      showLoginSuccessModal();
+    } else {
+      showLoginErrorModal();
+    }
+      })
+      .handleLogin(data);
+  }
+
+  function handleRegister(e) {
+  e.preventDefault();
+  const form = document.getElementById("registerForm");
+  if (form.password.value !== form.confirmPassword.value) {
+      showPasswordMismatchModal();
+    return;
+  }
+  const data = {
+    name: form.name.value,
+    email: form.email.value,
+    password: form.password.value
+  };
+  google.script.run
+    .withSuccessHandler(function(response) {
+      if (response === "Email đã được đăng ký.") {
+        showErrorModal();  // Hiển thị modal khi email đã đăng ký
+      } else {
+        showSuccessModal(); // Hiển thị modal thành công
+      }
+    })
+    .handleRegister(data);
+}
+
+function showErrorModal() {
+  document.getElementById("errorModal").style.display = "block";
+}
+
+function closeErrorModal() {
+  document.getElementById("errorModal").style.display = "none";
+}
+function showSuccessModal() {
+  document.getElementById("successModal").style.display = "block";
+}
+
+function closeSuccessModal() {
+  document.getElementById("successModal").style.display = "none";
+  showTab('login'); // Quay lại form đăng nhập sau khi đóng modal
+}
+// hàm điều khiển thông báo mật khẩu không khớp dạng modal
+function showPasswordMismatchModal() {
+  document.getElementById("passwordMismatchModal").style.display = "block";
+}
+
+function closePasswordMismatchModal() {
+  document.getElementById("passwordMismatchModal").style.display = "none";
+}
+// modal thông báo đăng nhập thành công
+function showLoginSuccessModal() {
+  document.getElementById("loginSuccessModal").style.display = "block";
+}
+
+function closeLoginSuccessModal() {
+  document.getElementById("loginSuccessModal").style.display = "none";
+  // Có thể thêm hành động điều hướng nếu muốn
+}
+
+function showLoginErrorModal() {
+  document.getElementById("loginErrorModal").style.display = "block";
+}
+
+function closeLoginErrorModal() {
+  document.getElementById("loginErrorModal").style.display = "none";
+}
+  // Cập nhật hàm showTab để bao gồm quên mật khẩu
+  function showTab(tabName) {
+    // Ẩn tất cả các tab
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // Hiển thị tab được chọn
+    document.getElementById(tabName).classList.add('active');
+  }
+
+  // Hàm khởi tạo ban đầu khi trang tải lên
+  window.onload = function() {
+    document.getElementById("authModal").style.display = "flex";
+  };
+
+  // Ngăn không cho tắt modal bằng phím Esc
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      event.preventDefault(); // 🚫 Không cho tắt bằng Esc
+    }
+  });
+  // Xử lý quên mật khẩu
+function handleForgotPassword(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById("forgotPasswordForm");
+    const email = form.email.value;
+
+    // Gửi đến Apps Script xử lý
+    google.script.run
+      .withSuccessHandler(function(response) {
+        document.getElementById("forgotPasswordMessage").innerText = response;
+      })
+      .withFailureHandler(function(error) {
+        document.getElementById("forgotPasswordMessage").innerText = "Đã xảy ra lỗi. Vui lòng thử lại sau.";
+        console.error("Lỗi khi gửi yêu cầu quên mật khẩu:", error);
+      })
+      .handleForgotPassword({ email: email });
+  }
+</script>
+<!-- Modal đăng ký thành công -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: green;">Đăng ký thành công!</h2>
+      <p>Bạn có thể đăng nhập bằng tài khoản vừa tạo.</p>
+      <button onclick="closeSuccessModal()">Đăng nhập ngay</button>
+    </div>
+  </div>
+</div>
+<!-- Modal mật khẩu không khớp -->
+<div id="passwordMismatchModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: red;">Lỗi!</h2>
+      <p>Mật khẩu không khớp.</p>
+      <button onclick="closePasswordMismatchModal()">Thử lại</button>
+    </div>
+  </div>
+</div>
+ <!--  ✅ Modal: Đăng nhập thành công -->
+<div id="loginSuccessModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: green;">Đăng nhập thành công!</h2>
+      <p>Chào mừng bạn quay trở lại.</p>
+      <button onclick="closeLoginSuccessModal()">Tiếp tục</button>
+    </div>
+  </div>
+</div>
+<!-- ❌ Modal: Sai email hoặc mật khẩu -->
+<div id="loginErrorModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: red;">Đăng nhập thất bại</h2>
+      <p>Email hoặc mật khẩu không đúng. Vui lòng thử lại.</p>
+      <button onclick="closeLoginErrorModal()">Thử lại</button>
+    </div>
+  </div>
+</div>
+  </body>
+</html>
