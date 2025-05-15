@@ -244,6 +244,11 @@
   function handleRegister(e) {
   e.preventDefault();
   const form = document.getElementById("registerForm");
+   // Kiểm tra độ dài mật khẩu
+  if (form.password.value.length < 6) {
+    showPasswordTooShortModal(); // Hiển thị modal thông báo mật khẩu quá ngắn
+    return; // Dừng xử lý nếu mật khẩu không đủ dài
+  }
   if (form.password.value !== form.confirmPassword.value) {
       showPasswordMismatchModal();
     return;
@@ -343,6 +348,14 @@ function handleForgotPassword(event) {
       })
       .handleForgotPassword({ email: email });
   }
+  // hàm điều khiển thông báo mật khẩu quá ngắn dạng modal
+function showPasswordTooShortModal() {
+  document.getElementById("passwordTooShortModal").style.display = "block";
+}
+
+function closePasswordTooShortModal() {
+  document.getElementById("passwordTooShortModal").style.display = "none";
+}
 </script>
 <div id="successModal" class="modal">
   <div class="modal-content">
@@ -377,6 +390,15 @@ function handleForgotPassword(event) {
       <h2 style="color: red;">Đăng nhập thất bại</h2>
       <p>Email hoặc mật khẩu không đúng. Vui lòng thử lại.</p>
       <button onclick="closeLoginErrorModal()">Thử lại</button>
+    </div>
+  </div>
+</div>
+<div id="passwordTooShortModal" class="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h2 style="color: red;">Lỗi!</h2>
+      <p>Mật khẩu phải có ít nhất 6 ký tự.</p>
+      <button onclick="closePasswordTooShortModal()">Thử lại</button>
     </div>
   </div>
 </div>
